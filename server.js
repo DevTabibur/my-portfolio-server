@@ -108,11 +108,7 @@ async function run() {
     //   }
     // });
 
-    // load project
-    // app.get("/projects", async (req, res) => {
-    //   const result = await projectsCollection.find().toArray();
-    //   res.send(result);
-    // });
+    
 
     // // load blogs
     // app.get("/blogs", async (req, res) => {
@@ -168,6 +164,37 @@ async function run() {
     //   res.sendFile(path.join(__dirname, "./uploads/tamiz--1662997746605.jpg"));
     // });
 
+    // 2.a => load project
+    app.get("/projects", async (req, res) => {
+      const result = await projectsCollection.find({}).toArray();
+      res.send(result);
+    });
+
+    // 2.b => post project in server to db
+    app.post("/projects", async (req, res) => {
+      const data = req.body
+      const result = await projectsCollection.insertOne(data);
+      res.send(result);
+    });
+
+    // 2.c => get projects load by id
+    app.get("/projects/:id", async(req, res)=>{
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await projectsCollection.findOne(query);
+      res.send(result);
+    })
+
+
+    // 2.d => get projects load by id
+    app.delete("/projects/:id", async(req, res)=>{
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await projectsCollection.deleteOne(query);
+      res.send(result);
+    })
+
+
     // 3.a => get all blogs
     app.get("/blogs", async(req, res)=>{
       const result = await blogsCollection.find({}).toArray();
@@ -192,7 +219,6 @@ async function run() {
     // 3.d => delete blog by id
     app.delete("/blogs/:id", async (req, res)=>{
       const id = req.params.id;
-      console.log('id', id)
       const filter = {_id:ObjectId(id)}
       const result = await blogsCollection.deleteOne(filter);
       res.send(result);
